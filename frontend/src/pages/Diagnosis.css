@@ -1,124 +1,209 @@
 .diagnosis{
     min-height:100vh;
-    padding:50px;
+    padding:50px 20px;
     text-align:center;
     color:white;
 }
 
 .input-card{
-
-    width:500px;
-
+    width:650px;
+    max-width:95%;
     margin:auto;
-
     padding:40px;
-
     background:rgba(255,255,255,0.05);
-
+    border:1px solid rgba(255,255,255,0.08);
     border-radius:25px;
-
     backdrop-filter:blur(20px);
+    box-shadow:0 10px 35px rgba(0,0,0,0.25);
+}
+
+.input-card h1{
+    margin-bottom:35px;
+    font-size:32px;
+    letter-spacing:1px;
+}
+
+.input-group{
+    text-align:left;
+    margin-bottom:22px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:8px;
+    font-size:15px;
+    font-weight:600;
+    color:#ffffff;
+}
+
+.input-guide{
+    margin-bottom:10px;
+    padding:10px 14px;
+    border-left:4px solid #00d084;
+    background:rgba(0,208,132,0.08);
+    border-radius:12px;
+    color:#9df5c8;
+    font-size:13px;
+    line-height:20px;
 }
 
 .input-card input{
-
     width:100%;
-
     padding:16px;
-
-    margin-bottom:18px;
-
     border:none;
-
     border-radius:15px;
-
     background:#1e293b;
-
     color:white;
+    font-size:16px;
+    box-sizing:border-box;
+    transition:0.3s;
+}
 
-    font-size:17px;
+.input-card input:focus{
+    outline:none;
+    border:1px solid #8b5cf6;
+    box-shadow:0 0 15px rgba(139,92,246,0.3);
+}
+
+.input-card input::placeholder{
+    color:#94a3b8;
 }
 
 .input-card button{
-
-    padding:15px 30px;
-
+    margin-top:20px;
+    padding:14px 28px;
     border:none;
-
     border-radius:25px;
-
-    background:#8b5cf6;
-
+    background:linear-gradient(
+        90deg,
+        #8b5cf6,
+        #06b6d4
+    );
     color:white;
-
     cursor:pointer;
-
     font-size:16px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.input-card button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 20px rgba(139,92,246,0.35);
 }
 
 .result-card{
-
     width:750px;
-
-    margin:50px auto;
-
-    padding:40px;
-
+    max-width:95%;
+    margin:40px auto;
+    padding:35px;
     text-align:left;
-
     background:rgba(255,255,255,0.05);
-
+    border:1px solid rgba(255,255,255,0.08);
     border-radius:25px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 35px rgba(0,0,0,0.25);
 }
 
 .risk{
-
-    width:180px;
-
+    width:170px;
     padding:12px;
-
     border-radius:15px;
-
     color:white;
-
     font-weight:700;
-
     text-align:center;
-
     margin-bottom:20px;
+    font-size:15px;
 }
 
 .result-card h2{
-    margin-bottom:25px;
+    margin-bottom:20px;
+    font-size:30px;
 }
 
 .result-card h3{
+    color:#7dd3fc;
+    margin-top:30px;
+    margin-bottom:12px;
+}
 
-    color:#8b5cf6;
-
-    margin-top:25px;
+.result-card p{
+    color:#dddddd;
+    line-height:28px;
 }
 
 .result-card ul{
-
     padding-left:20px;
+    line-height:32px;
+}
 
-    line-height:35px;
+.result-card li{
+    color:#e2e8f0;
 }
 
 .warning{
-
     margin-top:35px;
-
-    background:#451a03;
-
-    border-left:5px solid orange;
-
     padding:20px;
-
+    background:rgba(255,140,0,0.08);
+    border-left:5px solid orange;
     border-radius:15px;
-
     color:#fde68a;
+    line-height:28px;
+}
 
-    line-height:30px;
+@media(max-width:768px){
+
+    .diagnosis{
+        padding:20px;
+    }
+
+    .input-card{
+        padding:25px;
+    }
+
+    .result-card{
+        padding:25px;
+    }
+
+    .input-card h1{
+        font-size:24px;
+    }
+
+    .result-card h2{
+        font-size:24px;
+    }
+}
+.history-analysis{
+    margin-top:15px;
+    margin-bottom:20px;
+    padding:18px;
+    border-radius:15px;
+    background:rgba(125,211,252,0.08);
+    border-left:4px solid #7dd3fc;
+}
+
+.history-analysis p{
+    margin:10px 0;
+    color:#dbeafe;
+}
+.back-btn{
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:#1e293b;
+    color:white;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+.back-btn:hover{
+    background:#374151;
+}
+.diagnosis{
+    position:relative;
+    z-index:10;
+}
+
+.back-btn{
+    position:relative;
+    z-index:20;
 }

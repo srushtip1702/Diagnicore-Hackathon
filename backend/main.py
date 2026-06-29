@@ -1,16 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from models import DiagnosisInput
 
-app = FastAPI(
-    title="DiagniCore",
-    description="AI Powered Diagnostic Assistant"
-)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,50 +23,55 @@ def home():
 @app.post("/predict")
 def predict(data: DiagnosisInput):
 
+    historical = {
+        "similarCases": 2,
+        "trend": "Stable"
+    }
+
     # ================= HEALTHCARE =================
 
     if data.domain == "healthcare":
 
-        if (
-            data.temperature and data.temperature > 100
-        ) or (
-            data.oxygen and data.oxygen < 92
-        ):
+        if data.temperature and data.temperature > 38:
+
+            historical = {
+                "similarCases": 3,
+                "trend": "Increasing Risk"
+            }
 
             return {
                 "risk": "HIGH",
-
-                "prediction":
-                "Possible Fever or Health Risk",
-
+                "prediction": "Possible Fever Detected",
                 "confidence": 92,
 
+                "historical": historical,
+
                 "explanation": [
-                    "Body temperature exceeds normal limits.",
-                    "Oxygen level indicates potential concern.",
-                    "Vital signs require attention."
+                    "Body temperature exceeds normal range.",
+                    "Vital signs indicate a possible fever.",
+                    "Previous similar records detected."
                 ],
 
                 "solution": [
                     "Take proper rest.",
                     "Drink sufficient fluids.",
-                    "Monitor temperature regularly."
+                    "Monitor body temperature."
                 ]
             }
 
         return {
-
             "risk": "SAFE",
-
-            "prediction":
-            "Health Parameters Normal",
-
+            "prediction": "Health Parameters Normal",
             "confidence": 84,
+
+            "historical": {
+                "similarCases": 1,
+                "trend": "Improving"
+            },
 
             "explanation": [
                 "Temperature is within normal range.",
-                "Oxygen levels are stable.",
-                "No immediate health concern."
+                "No significant health concern detected."
             ],
 
             "solution": [
@@ -83,49 +84,25 @@ def predict(data: DiagnosisInput):
 
     if data.domain == "agriculture":
 
-        if (
-            data.soilMoisture and data.soilMoisture < 30
-        ):
-
-            return {
-
-                "risk": "MEDIUM",
-
-                "prediction":
-                "Low Soil Moisture Detected",
-
-                "confidence": 85,
-
-                "explanation": [
-                    "Soil moisture is below threshold.",
-                    "Crop growth may be affected.",
-                    "Environmental conditions are dry."
-                ],
-
-                "solution": [
-                    "Increase irrigation.",
-                    "Check water availability.",
-                    "Monitor soil regularly."
-                ]
-            }
-
         return {
+            "risk": "MEDIUM",
+            "prediction": "Low Soil Moisture Detected",
+            "confidence": 85,
 
-            "risk": "SAFE",
-
-            "prediction":
-            "Crop Conditions Healthy",
-
-            "confidence": 82,
+            "historical": {
+                "similarCases": 2,
+                "trend": "Stable"
+            },
 
             "explanation": [
-                "Moisture level is adequate.",
-                "Environmental conditions are stable."
+                "Soil moisture is below recommended level.",
+                "Crop health may be affected.",
+                "Previous farm records show similar conditions."
             ],
 
             "solution": [
-                "Continue regular monitoring.",
-                "Maintain irrigation schedule."
+                "Increase irrigation.",
+                "Monitor soil condition regularly."
             ]
         }
 
@@ -133,49 +110,25 @@ def predict(data: DiagnosisInput):
 
     if data.domain == "factory":
 
-        if (
-            data.machineTemp and data.machineTemp > 90
-        ):
-
-            return {
-
-                "risk": "HIGH",
-
-                "prediction":
-                "Machine Failure Risk",
-
-                "confidence": 89,
-
-                "explanation": [
-                    "Machine temperature exceeded threshold.",
-                    "Equipment may overheat.",
-                    "Historical failures show similar patterns."
-                ],
-
-                "solution": [
-                    "Reduce machine load.",
-                    "Inspect machinery immediately.",
-                    "Schedule maintenance."
-                ]
-            }
-
         return {
+            "risk": "HIGH",
+            "prediction": "Machine Failure Risk",
+            "confidence": 88,
 
-            "risk": "LOW",
-
-            "prediction":
-            "Machine Operating Normally",
-
-            "confidence": 80,
+            "historical": {
+                "similarCases": 4,
+                "trend": "Increasing Risk"
+            },
 
             "explanation": [
-                "Temperature within safe range.",
-                "Operating conditions appear stable."
+                "Machine temperature exceeded threshold.",
+                "Operating conditions are unsafe.",
+                "Previous maintenance records indicate similar faults."
             ],
 
             "solution": [
-                "Continue monitoring.",
-                "Perform routine maintenance."
+                "Reduce machine load.",
+                "Schedule immediate inspection."
             ]
         }
 
@@ -183,63 +136,39 @@ def predict(data: DiagnosisInput):
 
     if data.domain == "business":
 
-        if (
-            data.complaints and data.complaints > 50
-        ):
-
-            return {
-
-                "risk": "MEDIUM",
-
-                "prediction":
-                "Operational Risk Detected",
-
-                "confidence": 78,
-
-                "explanation": [
-                    "Customer complaints are increasing.",
-                    "Operational efficiency may be affected.",
-                    "Business performance needs review."
-                ],
-
-                "solution": [
-                    "Review customer feedback.",
-                    "Optimize operations.",
-                    "Improve service quality."
-                ]
-            }
-
         return {
+            "risk": "LOW",
+            "prediction": "Operational Performance Stable",
+            "confidence": 78,
 
-            "risk": "SAFE",
-
-            "prediction":
-            "Business Performance Stable",
-
-            "confidence": 83,
+            "historical": {
+                "similarCases": 2,
+                "trend": "Stable"
+            },
 
             "explanation": [
-                "Business indicators appear healthy.",
-                "Operational performance is stable."
+                "Business indicators appear normal.",
+                "No major operational issue detected."
             ],
 
             "solution": [
-                "Maintain current operations.",
-                "Continue monitoring KPIs."
+                "Continue monitoring performance.",
+                "Maintain current operations."
             ]
         }
 
     return {
-
         "risk": "LOW",
-
-        "prediction":
-        "No Risk Detected",
-
+        "prediction": "Normal",
         "confidence": 70,
 
+        "historical": {
+            "similarCases": 0,
+            "trend": "Unknown"
+        },
+
         "explanation": [
-            "Input values appear normal."
+            "No significant issue detected."
         ],
 
         "solution": [

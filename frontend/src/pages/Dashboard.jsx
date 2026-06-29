@@ -8,7 +8,8 @@ import {
   FaChartLine,
   FaBrain,
   FaShieldAlt,
-  FaWifi
+  FaWifi,
+  FaHistory
 } from "react-icons/fa";
 
 export default function Dashboard() {
@@ -51,14 +52,27 @@ export default function Dashboard() {
 
       <div className="hero">
 
-        <h1>DiagniCore</h1>
+  <img
+    src="/logo.png"
+    alt="DiagniCore"
+    className="logo"
+  />
 
-        <p>
-          One AI Engine. Multiple Domains.
-        </p>
+  <h1>DiagniCore</h1>
 
-      </div>
+  <p>
+    One AI Engine. Multiple Domains.
+  </p>
 
+  <button
+    className="history-btn"
+    onClick={() => navigate("/history")}
+  >
+    <FaHistory />
+    View History
+  </button>
+
+</div>
       <div className="cards">
 
         {domains.map((item, index) => (

@@ -1,184 +1,337 @@
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import API from "../services/api";
 import "./Diagnosis.css";
 
-import { useParams } from "react-router-dom";
-import { useState } from "react";
+function Diagnosis() {
 
-import API from "../services/api";
+  const navigate = useNavigate();
+  const { domain } = useParams();
 
-export default function Diagnosis() {
+  const fieldConfig = {
+    healthcare: [
+      { name: "name", label: "Patient Name" },
+      { name: "age", label: "Age (Years)" },
+      { name: "weight", label: "Weight (kg)" },
+      { name: "medicalHistory", label: "Medical History" },
+      { name: "temperature", label: "Body Temperature (°C)" },
+      { name: "heartRate", label: "Heart Rate (BPM)" },
+      { name: "oxygen", label: "Oxygen Level (%)" },
+      { name: "bloodPressure", label: "Blood Pressure (mmHg)" }
+    ],
 
-    const { domain } = useParams();
+    agriculture: [
+      { name: "name", label: "Farmer Name" },
+      { name: "crop", label: "Crop Type" },
+      { name: "season", label: "Current Season" },
+      { name: "waterAvailability", label: "Water Availability (%)" },
+      { name: "temperature", label: "Temperature (°C)" },
+      { name: "moisture", label: "Soil Moisture (%)" },
+      { name: "ph", label: "Soil pH" },
+      { name: "cropHealth", label: "Crop Health Score (0-100)" }
+    ],
 
-    const [formData, setFormData] = useState({});
+    factory: [
+      { name: "machineId", label: "Machine ID" },
+      { name: "previousFailure", label: "Previous Failure" },
+      { name: "temperature", label: "Machine Temperature (°C)" },
+      { name: "vibration", label: "Vibration Level" },
+      { name: "pressure", label: "Pressure (PSI)" },
+      { name: "efficiency", label: "Efficiency (%)" }
+    ],
 
-    const [result, setResult] = useState(null);
+    business: [
+      { name: "companyName", label: "Company Name" },
+      { name: "industry", label: "Industry Type" },
+      { name: "revenue", label: "Revenue (₹)" },
+      { name: "profit", label: "Profit (%)" },
+      { name: "customers", label: "Customer Growth (%)" },
+      { name: "expenses", label: "Expenses (₹)" }
+    ]
+  };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+  const guidance = {
+    temperature: "Normal: 36–37°C",
+    heartRate: "Normal: 60–100 BPM",
+    oxygen: "Normal: 95–100%",
+    bloodPressure: "Normal: Around 120/80 mmHg",
 
-    const analyze = async () => {
+    moisture: "Ideal: 40–70%",
+    ph: "Ideal: 6–7.5",
+    cropHealth: "Healthy range: 70–100",
+    waterAvailability: "Recommended: Above 60%",
 
-        const response = await API.post(
-            "/predict",
-            {
-                domain,
-                ...formData
-            }
-        );
+    vibration: "High vibration may indicate wear.",
+    pressure: "Check machine operating limits.",
+    efficiency: "Healthy: Above 80%",
 
-        setResult(response.data);
-    };
+    revenue: "Monthly revenue amount.",
+    profit: "Healthy: Above 15%",
+    customers: "Customer growth percentage.",
+    expenses: "Monthly operating expenses.",
 
-    const getFields = () => {
+    age: "Enter age in years.",
+    weight: "Enter weight in kilograms."
+  };
 
-        switch(domain){
+  const fields = fieldConfig[domain] || [];
 
-            case "healthcare":
-                return [
-                    "age",
-                    "temperature",
-                    "heartRate",
-                    "oxygen"
-                ];
+  const [formData, setFormData] = useState({});
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-            case "agriculture":
-                return [
-                    "soilMoisture",
-                    "humidity",
-                    "temperature",
-                    "cropHealth"
-                ];
+  const riskColors = {
+    HIGH: "#ff4d4d",
+    MEDIUM: "#ff9800",
+    LOW: "#ffd54f",
+    SAFE: "#4caf50"
+  };
 
-            case "factory":
-                return [
-                    "machineTemp",
-                    "vibration",
-                    "runtime",
-                    "load"
-                ];
+  const textFields = [
+    "name",
+    "medicalHistory",
+    "crop",
+    "season",
+    "machineId",
+    "previousFailure",
+    "companyName",
+    "industry"
+  ];
 
-            case "business":
-                return [
-                    "revenue",
-                    "complaints",
-                    "operationalCost",
-                    "performance"
-                ];
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-            default:
-                return [];
-        }
-    };
+    setFormData({
+      ...formData,
+      [name]: textFields.includes(name)
+        ? value
+        : Number(value)
+    });
+  };
 
-    const riskColor = {
-        HIGH:"#ef4444",
-        MEDIUM:"#f97316",
-        LOW:"#eab308",
-        SAFE:"#22c55e"
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    return (
+    try {
+      setLoading(true);
 
-        <div className="diagnosis">
+      const response = await API.post("/predict", {
+        domain,
+        ...formData
+      });
 
-            <h1>
-                {domain.toUpperCase()}
-            </h1>
+      const previousRecords =
+        JSON.parse(localStorage.getItem("records")) || [];
 
-            <div className="input-card">
+      const similarCases =
+        previousRecords.filter(
+          (record) =>
+            record.domain === domain
+        ).length;
 
-                {getFields().map((field) => (
+      const previousRisk =
+        similarCases > 0
+          ? previousRecords[
+              previousRecords.length - 1
+            ].result.risk
+          : "None";
 
-                    <input
-                        key={field}
-                        type="number"
-                        placeholder={field}
-                        name={field}
-                        onChange={handleChange}
-                    />
+      response.data.historical = {
+        similarCases,
+        previousRisk,
+        trend:
+          similarCases >= 3
+            ? "Recurring Pattern"
+            : "Stable"
+      };
 
-                ))}
+      setResult(response.data);
 
-                <button onClick={analyze}>
-                    Analyze AI
-                </button>
+      previousRecords.push({
+        domain,
+        user: formData,
+        result: response.data,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem(
+        "records",
+        JSON.stringify(previousRecords)
+      );
+
+    } catch (error) {
+      console.log(error);
+      alert("Backend connection error.");
+    }
+
+    setLoading(false);
+  };
+
+ return (
+  <div className="diagnosis">
+
+    <div className="input-card">
+
+      <button
+        type="button"
+        className="back-btn"
+        onClick={() => navigate("/dashboard")}
+      >
+        ← Dashboard
+      </button>
+
+      <h1>
+        {domain.toUpperCase()} ANALYSIS
+      </h1>
+
+        <form onSubmit={handleSubmit}>
+
+          {fields.map((field) => (
+
+            <div
+              className="input-group"
+              key={field.name}
+            >
+
+              <label>
+                {field.label}
+              </label>
+
+              {guidance[field.name] && (
+                <div className="input-guide">
+                  ℹ {guidance[field.name]}
+                </div>
+              )}
+
+              <input
+                type={
+                  textFields.includes(field.name)
+                    ? "text"
+                    : "number"
+                }
+                name={field.name}
+                placeholder={field.label}
+                onChange={handleChange}
+                required
+              />
 
             </div>
 
-            {result && (
+          ))}
 
-                <div className="result-card">
+          <button type="submit">
 
-                    <div
-                        className="risk"
-                        style={{
-                            background:
-                            riskColor[result.risk]
-                        }}
-                    >
-                        {result.risk} RISK
-                    </div>
+            {loading
+              ? "Analyzing..."
+              : "Analyze AI"}
 
-                    <h2>
-                        {result.prediction}
-                    </h2>
+          </button>
 
-                    <h3>
-                        Confidence Score
-                    </h3>
+        </form>
 
-                    <p>
-                        {result.confidence}%
-                    </p>
+      </div>
 
-                    <h3>
-                        Why was this detected?
-                    </h3>
+      {result && (
 
-                    <ul>
-                        {result.explanation.map(
-                            (item,index)=>(
-                                <li key={index}>
-                                    {item}
-                                </li>
-                            )
-                        )}
-                    </ul>
+        <div className="result-card">
 
-                    <h3>
-                        Temporary Recommendations
-                    </h3>
+          <div
+            className="risk"
+            style={{
+              background:
+                riskColors[result.risk]
+            }}
+          >
+            {result.risk}
+          </div>
 
-                    <ul>
-                        {result.solution.map(
-                            (item,index)=>(
-                                <li key={index}>
-                                    {item}
-                                </li>
-                            )
-                        )}
-                    </ul>
+          <h2>
+            {result.prediction}
+          </h2>
 
-                    <div className="warning">
+          <h3>
+            Confidence Score
+          </h3>
 
-                        ⚠ AI GENERATED CAUTION
+          <p>
+            {result.confidence}%
+          </p>
 
-                        <br/><br/>
+          <h3>
+            Historical Analysis
+          </h3>
 
-                        The recommendations provided above are AI-generated temporary suggestions.
+          <div className="history-analysis">
 
-                        Please take the required action as early as possible and consult the appropriate professional or domain expert.
+            <p>
+              <strong>
+                Previous Similar Cases:
+              </strong>{" "}
+              {result.historical?.similarCases}
+            </p>
 
-                    </div>
+            <p>
+              <strong>
+                Previous Risk:
+              </strong>{" "}
+              {result.historical?.previousRisk}
+            </p>
 
-                </div>
+            <p>
+              <strong>
+                Risk Trend:
+              </strong>{" "}
+              {result.historical?.trend}
+            </p>
 
+          </div>
+
+          <h3>
+            AI Analysis
+          </h3>
+
+          <ul>
+            {result.explanation?.map(
+              (item, index) => (
+                <li key={index}>
+                  {item}
+                </li>
+              )
             )}
+          </ul>
+
+          <h3>
+            Temporary Recommendation
+          </h3>
+
+          <ul>
+            {result.solution?.map(
+              (item, index) => (
+                <li key={index}>
+                  {item}
+                </li>
+              )
+            )}
+          </ul>
+
+          <div className="warning">
+
+            ⚠ AI-generated temporary guidance.
+
+            <br /><br />
+
+            These recommendations are temporary and generated by DiagniCore AI.
+
+            Please consult the relevant professional or authority as early as possible.
+
+          </div>
 
         </div>
-    );
+
+      )}
+
+    </div>
+  );
 }
+
+export default Diagnosis;

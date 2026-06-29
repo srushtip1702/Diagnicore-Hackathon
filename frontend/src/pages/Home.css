@@ -1,0 +1,44 @@
+.home{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.home-card{
+    text-align:center;
+}
+
+.home-logo{
+    width:300px;
+    margin-bottom:20px;
+    filter:
+        drop-shadow(
+            0 0 40px rgba(
+                139,
+                92,
+                246,
+                0.5
+            )
+        );
+}
+
+.home-card h1{
+    font-size:70px;
+    margin-bottom:10px;
+}
+
+.home-card p{
+    color:#94a3b8;
+    margin-bottom:35px;
+}
+
+.home-card button{
+    padding:16px 35px;
+    border:none;
+    border-radius:30px;
+    background:#8b5cf6;
+    color:white;
+    cursor:pointer;
+    font-size:18px;
+}
