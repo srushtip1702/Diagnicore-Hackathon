@@ -149,7 +149,7 @@ Demo Video:
 (Add Drive Link)
 
 GitHub Repository:
-
+https://github.com/srushtip1702/Diagnicore-Hackathon
 
 
 
