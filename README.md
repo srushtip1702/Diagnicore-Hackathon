@@ -141,6 +141,8 @@ http://127.0.0.1:8000
 * Voice-assisted diagnosis
 * Cloud deployment
 * Advanced predictive analytics
+* Regional language support
+* Voice-assisted diagnosis
 
 
 # Demo
