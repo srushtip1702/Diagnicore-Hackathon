@@ -148,7 +148,7 @@ http://127.0.0.1:8000
 # Demo
 
 Demo Video:
-(Add Drive Link)
+https://drive.google.com/file/d/1m76FPF3F6C6UbNVi2uvd4U9AE35ByIVo/view?usp=drive_link
 
 GitHub Repository:
 https://github.com/srushtip1702/Diagnicore-Hackathon
