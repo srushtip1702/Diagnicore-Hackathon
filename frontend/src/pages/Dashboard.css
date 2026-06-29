@@ -303,3 +303,17 @@ body::after{
 .logo:hover{
     transform:scale(1.05);
 }
+.language-select{
+    padding:10px 15px;
+    border:none;
+    border-radius:15px;
+    background:#1e293b;
+    color:white;
+    margin-bottom:20px;
+    cursor:pointer;
+}
+
+.logo{
+    width:180px;
+    margin-bottom:20px;
+}

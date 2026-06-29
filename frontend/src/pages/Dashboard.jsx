@@ -1,5 +1,6 @@
 import "./Dashboard.css";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import {
   FaHeartbeat,
@@ -16,63 +17,137 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
+  const [language, setLanguage] = useState(
+    localStorage.getItem("language") || "english"
+  );
+
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    localStorage.setItem("language", lang);
+  };
+
+  const translations = {
+
+    english: {
+      slogan: "One AI Engine. Multiple Domains.",
+      history: "View History",
+      healthcare: "Healthcare",
+      agriculture: "Agriculture",
+      factory: "Manufacturing",
+      business: "Business"
+    },
+
+    hindi: {
+      slogan: "एक AI इंजन। अनेक क्षेत्र।",
+      history: "इतिहास देखें",
+      healthcare: "स्वास्थ्य",
+      agriculture: "कृषि",
+      factory: "उद्योग",
+      business: "व्यवसाय"
+    },
+
+    marathi: {
+      slogan: "एक AI इंजिन. अनेक क्षेत्रे.",
+      history: "इतिहास पहा",
+      healthcare: "आरोग्य",
+      agriculture: "शेती",
+      factory: "उद्योग",
+      business: "व्यवसाय"
+    }
+  };
+
+  const t = translations[language];
+
   const domains = [
     {
       icon: <FaHeartbeat />,
-      title: "Healthcare",
-      desc: "Analyze patient health conditions and risks.",
+      title: t.healthcare,
+      desc:
+        "Analyze patient health conditions and risks.",
       route: "healthcare",
       color: "#8b5cf6"
     },
+
     {
       icon: <FaLeaf />,
-      title: "Agriculture",
-      desc: "Monitor crops and detect agricultural issues.",
+      title: t.agriculture,
+      desc:
+        "Monitor crops and detect agricultural issues.",
       route: "agriculture",
       color: "#06b6d4"
     },
+
     {
       icon: <FaIndustry />,
-      title: "Manufacturing",
-      desc: "Predict machine failures and maintenance needs.",
+      title: t.factory,
+      desc:
+        "Predict machine failures and maintenance needs.",
       route: "factory",
       color: "#6366f1"
     },
+
     {
       icon: <FaChartLine />,
-      title: "Business",
-      desc: "Analyze business risks and operations.",
+      title: t.business,
+      desc:
+        "Analyze business risks and operations.",
       route: "business",
       color: "#c084fc"
     }
   ];
 
   return (
+
     <div className="dashboard">
 
       <div className="hero">
 
-  <img
-    src="/logo.png"
-    alt="DiagniCore"
-    className="logo"
-  />
+        <img
+          src="/logo.png"
+          alt="DiagniCore"
+          className="logo"
+        />
 
-  <h1>DiagniCore</h1>
+        <select
+          className="language-select"
+          value={language}
+          onChange={(e) =>
+            changeLanguage(
+              e.target.value
+            )
+          }
+        >
+          <option value="english">
+            English
+          </option>
 
-  <p>
-    One AI Engine. Multiple Domains.
-  </p>
+          <option value="hindi">
+            हिंदी
+          </option>
 
-  <button
-    className="history-btn"
-    onClick={() => navigate("/history")}
-  >
-    <FaHistory />
-    View History
-  </button>
+          <option value="marathi">
+            मराठी
+          </option>
+        </select>
 
-</div>
+        <h1>DiagniCore</h1>
+
+        <p>
+          {t.slogan}
+        </p>
+
+        <button
+          className="history-btn"
+          onClick={() =>
+            navigate("/history")
+          }
+        >
+          <FaHistory />
+          {t.history}
+        </button>
+
+      </div>
+
       <div className="cards">
 
         {domains.map((item, index) => (
@@ -84,12 +159,16 @@ export default function Dashboard() {
 
             <div
               className="icon"
-              style={{ color: item.color }}
+              style={{
+                color: item.color
+              }}
             >
               {item.icon}
             </div>
 
-            <h2>{item.title}</h2>
+            <h2>
+              {item.title}
+            </h2>
 
             <span>
               {item.desc}
@@ -97,7 +176,9 @@ export default function Dashboard() {
 
             <button
               onClick={() =>
-                navigate(`/diagnosis/${item.route}`)
+                navigate(
+                  `/diagnosis/${item.route}`
+                )
               }
             >
               Diagnose →
@@ -112,31 +193,59 @@ export default function Dashboard() {
       <div className="features">
 
         <div className="feature-box">
-          <FaBrain className="feature-icon" />
-          <h3>AI Powered</h3>
+
+          <FaBrain
+            className="feature-icon"
+          />
+
+          <h3>
+            AI Powered
+          </h3>
+
           <p>
-            Smart prediction engine for faster decisions.
+            Smart prediction engine for
+            faster decisions.
           </p>
+
         </div>
 
         <div className="feature-box">
-          <FaWifi className="feature-icon" />
-          <h3>Offline First</h3>
+
+          <FaWifi
+            className="feature-icon"
+          />
+
+          <h3>
+            Offline First
+          </h3>
+
           <p>
-            Works even in low-connectivity environments.
+            Works even in low-connectivity
+            environments.
           </p>
+
         </div>
 
         <div className="feature-box">
-          <FaShieldAlt className="feature-icon" />
-          <h3>Explainable AI</h3>
+
+          <FaShieldAlt
+            className="feature-icon"
+          />
+
+          <h3>
+            Explainable AI
+          </h3>
+
           <p>
-            Provides confidence scores and explanations.
+            Provides confidence scores
+            and explanations.
           </p>
+
         </div>
 
       </div>
 
     </div>
+
   );
 }

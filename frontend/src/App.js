@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import { LanguageProvider }
+from "./context/LanguageContext";
+
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Diagnosis from "./pages/Diagnosis";
@@ -7,33 +10,37 @@ import History from "./pages/History";
 
 function App() {
   return (
-    <BrowserRouter>
+    <LanguageProvider>
 
-      <Routes>
+      <BrowserRouter>
 
-        <Route
-          path="/"
-          element={<Home />}
-        />
+        <Routes>
 
-        <Route
-          path="/dashboard"
-          element={<Dashboard />}
-        />
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-        <Route
-          path="/diagnosis/:domain"
-          element={<Diagnosis />}
-        />
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
 
-        <Route
-          path="/history"
-          element={<History />}
-        />
+          <Route
+            path="/diagnosis/:domain"
+            element={<Diagnosis />}
+          />
 
-      </Routes>
+          <Route
+            path="/history"
+            element={<History />}
+          />
 
-    </BrowserRouter>
+        </Routes>
+
+      </BrowserRouter>
+
+    </LanguageProvider>
   );
 }
 
