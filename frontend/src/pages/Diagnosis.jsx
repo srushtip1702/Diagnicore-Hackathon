@@ -338,6 +338,7 @@ const downloadPDF = () => {
                     ? "text"
                     : "number"
                 }
+                step="0.1"
                 name={field.name}
                 placeholder={field.label}
                 onChange={handleChange}
